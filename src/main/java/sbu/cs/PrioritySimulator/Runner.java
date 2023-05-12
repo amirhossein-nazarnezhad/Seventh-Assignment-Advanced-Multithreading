@@ -2,6 +2,7 @@ package sbu.cs.PrioritySimulator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class Runner {
 
@@ -32,43 +33,51 @@ public class Runner {
      */
     public void run(int blackCount, int blueCount, int whiteCount) throws InterruptedException {
         List<ColorThread> colorThreads = new ArrayList<>();
+        CountDownLatch Black = new CountDownLatch(blackCount);
+        CountDownLatch Blue = new CountDownLatch(blueCount);
+        CountDownLatch White = new CountDownLatch(whiteCount);
 
-        // TODO
+
 
         for (int i = 0; i < blackCount; i++) {
-            BlackThread blackThread = new BlackThread();
+            BlackThread blackThread = new BlackThread(Black);
             colorThreads.add(blackThread);
             blackThread.start();
         }
 
-        // TODO
+        Black.await();
+
 
         for (int i = 0; i < blueCount; i++) {
-            BlueThread blueThread = new BlueThread();
+            BlueThread blueThread = new BlueThread(Blue);
             colorThreads.add(blueThread);
             blueThread.start();
         }
 
-        // TODO
+        Blue.await();
+
 
         for (int i = 0; i < whiteCount; i++) {
-            WhiteThread whiteThread = new WhiteThread();
+            WhiteThread whiteThread = new WhiteThread(White);
             colorThreads.add(whiteThread);
             whiteThread.start();
         }
+        White.await();
 
-        // TODO
+
     }
 
-    synchronized public static void addToList(Message message) {
+    synchronized public static void addToList(Message message)
+    {
         messages.add(message);
     }
 
-    public List<Message> getMessages() {
+    public List<Message> getMessages()
+    {
         return messages;
     }
 
     public static void main(String[] args) {
-        // Use the main function to test the code yourself
+
     }
 }
