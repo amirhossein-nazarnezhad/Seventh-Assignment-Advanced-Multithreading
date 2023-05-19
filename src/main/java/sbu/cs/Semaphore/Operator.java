@@ -1,13 +1,23 @@
 package sbu.cs.Semaphore;
 
-public class Operator extends Thread {
+import java.util.concurrent.Semaphore;
 
-    public Operator(String name) {
+public class Operator extends Thread {
+    Semaphore semaphore;
+
+    public Operator(Semaphore semaphore , String name) {
         super(name);
+        this.semaphore=semaphore;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         for (int i = 0; i < 10; i++)
         {
             Resource.accessResource();         // critical section - a Maximum of 2 operators can access the resource concurrently
@@ -17,5 +27,6 @@ public class Operator extends Thread {
                 e.printStackTrace();
             }
         }
+        semaphore.release();
     }
 }
